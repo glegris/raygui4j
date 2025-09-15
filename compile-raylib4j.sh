@@ -22,7 +22,7 @@ find "$CLASSES_DIR" -type f -name '*.class' -delete
       echo "Can't find: $ROOT" >&2
     fi
   done
-} | xargs -0 javac -d "$CLASSES_DIR" -encoding UTF-8
+} | xargs -0 javac --release 8 -d "$CLASSES_DIR" -encoding UTF-8
 
 
 # JDK 9+ :
