@@ -1,0 +1,59 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'   # e.g., v1.0.0
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Temurin JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Build jar with manifest version
+        shell: bash
+        run: |
+          # Extract tag and remove leading "v"
+          TAG="${GITHUB_REF_NAME}"   # e.g., v1.0.0
+          VERSION="${TAG#v}"         # -> 1.0.0
+
+          # Build your classes (adapt this part if you use another script)
+          chmod +x ./compile-raylib4j.sh
+          ./compile-raylib4j.sh
+
+          # Create custom manifest including version
+          cat > manifest.mf <<EOF
+          Manifest-Version: 1.0
+          Implementation-Title: raygui4j
+          Implementation-Version: ${VERSION}
+          EOF
+
+          # Repackage jar with manifest
+          jar ufm raygui4j.jar manifest.mf
+
+      - name: Rename jar without leading "v"
+        id: namejar
+        shell: bash
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+          OUT="raygui4j-${VERSION}.jar"
+          mv raygui4j.jar "$OUT"
+          echo "jarname=$OUT" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release and upload jar
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: ${{ steps.namejar.outputs.jarname }}
+          generateReleaseNotes: true
