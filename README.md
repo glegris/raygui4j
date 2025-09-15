@@ -1,5 +1,7 @@
 # raygui4j
 
+![CI](https://github.com/glegris/raygui4j/actions/workflows/ci.yml/badge.svg)
+
 This repository packages the Java translation of [raygui 3.5](https://github.com/raysan5/raygui/releases/tag/3.5) produced by [mir2j](https://github.com/glegris/mir2j), so you can use raygui as a regular Java library with no JNI / native bindings. The goal is to make immediate-mode GUI controls available anywhere a JVM runs.
 
 The [current backend](https://github.com/glegris/raygui4j/blob/main/src/raygui4j/SwingBackend.java) is Swing. You can add others quickly by implementing this [small backend interface](https://github.com/glegris/raygui4j/blob/main/src/raygui4j/Backend.java).
