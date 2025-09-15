@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Temurin JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'   # or '17' if you prefer LTS 17
+      # All comments in English as requested:
+      - name: Build jar
+        shell: bash
+        run: |
+          chmod +x ./compile-raylib4j.sh
+          ./compile-raylib4j.sh
+          test -f raygui4j.jar
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: raygui4j-jar
+          path: raygui4j.jar
